@@ -1,3 +1,10 @@
+// TODOS:
+// - Display number of votes for each idea DONE
+// - Vote functionality (decrement users vote, increment ideas vote)
+// - Wrap the voting inc-dec process in a Firebase transaction
+// - Remove ideas/new route
+// - Inject currentUser to do away with all the needs calls
+// - Sort in descending order of votes
 App = Ember.Application.create();
 
 var dbRoot = "https://emberfire-ideavote.firebaseio.com"
@@ -139,7 +146,8 @@ App.IdeasNewController = Ember.ObjectController.extend({
       newIdea.setProperties({
         title: this.get('title'),
         submittedBy: this.get('auth.currentUser.id'),
-        timestamp: new Date()
+        timestamp: new Date(),
+        voteCount: 0
       });
       this.set('title', '');
     }
