@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ideavote - Let the best idea win</title>
+  <link rel="stylesheet" href="css/bootstrap-responsive.css">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+  <script type="text/x-handlebars" data-template-name="application">
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="brand" href="#">Ideavote built with EmberFire</a>
+          <div class="pull-right">
+            <ul class="nav pull-right">
+              {{#if auth.authed }}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    {{ auth.currentUser.name }}
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/user/preferences"><i class="icon-cog"></i> Preferences</a></li>
+                    <li class="divider"></li>
+                    <li><a {{ action logout }}><i class="icon-off"></i> Logout</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <div id="votes-left">
+                    <span class="badge badge-info">{{ auth.currentUser.votesLeft }}</span>
+                  </div>
+                </li>
+              {{else}}
+                <li>
+                  <button class="btn btn-primary" {{ action login }}>Sign in</button>
+                </li>
+              {{/if}}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {{ outlet }}
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="ideas">
+    {{ outlet }}
+    <div class="idea-list">
+      <ul class="unstyled">
+        {{#each controller}}
+          {{ render "idea" this }}
+        {{/each}}
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="idea">
+    {{#if displayable}}
+      <li>
+        <div class="idea">
+          <div class="row">
+            <div class="span8">
+              <strong>{{ title }}</strong>
+            </div>
+            <div class="span1">
+              {{ voteCount }}
+            </div>
+            {{#if auth.authed }}
+              <div class="span2">
+                <button class="btn btn-primary" {{action vote}}>Vote</button>
+              </div>
+              <div class="row">
+                <div class="span8">
+                  {{!votersSentence votes }}
+                </div>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      </li>
+    {{/if}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="ideas/new">
+    <div class="idea new-idea">
+      <div class="row">
+      {{#if auth.authed }}
+        <div class="span9">
+          {{input value=title placeholder="Put your idea here"}}
+        </div>
+        <div class="span2">
+          {{#if isDisabled }}
+            <button disabled="disabled" {{bindAttr class=":btn :btn-primary isDisabled:disabled" }} {{action sendIdea}} >Send my idea</button>
+          {{else}}
+            <button {{bindAttr class=":btn :btn-primary isDisabled:disabled" }} {{action sendIdea}} >Send my idea</button>
+          {{/if}}
+        </div>
+      {{ else }}
+        <a {{action login}} class="login-link">Sign in</a> to vote or to submit your idea.
+      {{/if}}
+      </div>
+    </div>
+  </script>
+
+  <script type="text/javascript">
+    window.dbName = "<%= db_name %>";
+  </script>
+  <script src="js/jquery-1.9.1.js"></script>
+  <script src="js/handlebars-1.0.0.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdn.firebase.com/v0/firebase.js"></script>
+  <script src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
+  <script src="http://builds.emberjs.com/ember-latest.js"></script>
+  <script src="http://firebase.github.io/emberFire/emberfire-latest.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
