@@ -134,8 +134,13 @@ App.IdeasNewController = Ember.ObjectController.extend({
 
   actions: {
     sendIdea: function() {
-      var newIdea = Ember.Object.create({ title: this.get('title'), timestamp: new Date() });
-      this.get('model').pushObject(newIdea);
+      var newIdeaRef = new Firebase(ideasPath).push();
+      var newIdea = EmberFire.Object.create({ ref: newIdeaRef });
+      newIdea.setProperties({
+        title: this.get('title'),
+        submittedBy: this.get('auth.currentUser.id'),
+        timestamp: new Date()
+      });
       this.set('title', '');
     }
   },
@@ -156,15 +161,14 @@ App.AuthController = Ember.Controller.extend({
       } else if (githubUser) {
         this.set('authed', true);
         var userRef = new Firebase(usersPath + '/' + githubUser.username);
-        var userProperties = {
+        var user = EmberFire.Object.create({ ref: userRef });
+        user.setProperties({
           id: githubUser.username,
           name: githubUser.username,
           displayName: githubUser.displayName,
           avatarUrl: githubUser.avatar_url,
           votesLeft: 10
-        }
-        var user = EmberFire.Object.create({ ref: userRef });
-        user.setProperties(userProperties);
+        });
         this.set('currentUser', user);
       } else {
         this.set('authed', false);
