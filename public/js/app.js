@@ -1,5 +1,5 @@
 // TODOS:
-// - Wrap the voting inc-dec process in a Firebase transaction
+// - Disable Vote buttons when no more votes left
 // - Remove ideas/new route
 // - Inject auth to all routes and controllers to do away with all the needs calls
 // - Sort in descending order of votes
@@ -195,42 +195,4 @@ App.AuthController = Ember.Controller.extend({
   }
 
 });
-
-Ember.Handlebars.registerBoundHelper('votersSentence', function(votes, options) {
-  var currentUser = options.data.keywords.controller.get('auth.currentUser')
-  var sentence = ["Voted by"];
-  var voterNames = votes.map(function(vote) {
-    var voter = vote.get('voter');
-    if (voter === currentUser) {
-      return 'you';
-    } else {
-      return voter.get('name');
-    }
-  });
-
-  var votesCount = votes.get('length');
-  if (!votesCount) {
-    sentence.push("nobody yet");
-  } else {
-    if (votesCount == 1) {
-      sentence.push("<em>" + voterNames[0] + "</em>");
-    } else {
-      // Sort
-      var sortedNames = [];
-      var youIndex = voterNames.indexOf("you");
-      if  (youIndex != -1) {
-        sortedNames = ["you"].concat(voterNames.slice(0, youIndex)).concat(voterNames.slice(youIndex + 1));
-      } else {
-        sortedNames = voterNames;
-      }
-      sortedNames = sortedNames.map(function(name) {
-        return "<em>" + name + "</em>";
-      });
-      butlast = sortedNames.slice(0, votesCount - 1);
-      sentence.push(butlast.join(', '));
-      sentence.push('and ' + sortedNames[voterNames.length - 1]);
-    }
-  }
-  return new Handlebars.SafeString(sentence.join(' '));
-}, '@each');
 
