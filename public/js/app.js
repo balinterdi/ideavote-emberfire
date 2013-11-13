@@ -1,8 +1,6 @@
 // TODOS:
-// - Disable Vote buttons when no more votes left
 // - Remove ideas/new route
 // - Inject auth to all routes and controllers to do away with all the needs calls
-// - Sort in descending order of votes
 // - Don't let user vote on the same idea multiple times
 App = Ember.Application.create();
 
@@ -28,26 +26,9 @@ var usersPath = dbRoot + "/users";
 //   }
 // });
 //
-// App.User = Ember.Object.extend({
-//   initialVotes: 10,
-//
-//   name: DS.attr('string'),
-//   displayName: DS.attr('string'),
-//   avatarUrl: DS.attr('string'),
-//   displayName: DS.attr('string'),
-//   votesEarned: DS.attr('number'),
-//   votesCast: DS.attr('number', { defaultValue: 0 }),
-//
-//   _votesEarned: function() {
-//     //NOTE: Unfortunately { defaultValue: 0 } does not work
-//     //since the model is already fetched from the database before creating it
-//     return this.get('votesEarned') || 0;
-//   }.property('votesEarned'),
-//
-//   votesLeft: function() {
-//     return this.get('initialVotes') - this.get('votesCast') + this.get('_votesEarned');
-//   }.property('initialVotes', 'votesCast', '_votesEarned')
-// });
+App.User = EmberFire.Object.extend({
+  noVotesLeft: Ember.computed.lte('votesLeft', 0)
+});
 
 App.Router.map(function() {
   this.resource('ideas', function() {
@@ -165,19 +146,22 @@ App.AuthController = Ember.Controller.extend({
       if (error) {
       } else if (githubUser) {
         this.set('authed', true);
+        var userRef = new Firebase(usersPath + '/' + githubUser.username);
+        var controller = this;
         var properties = {
           id: githubUser.username,
           name: githubUser.username,
           displayName: githubUser.displayName,
           avatarUrl: githubUser.avatar_url,
         };
-        var userRef = new Firebase(usersPath + '/' + githubUser.username);
-        var controller = this;
-        userRef.on('value', function(snapshot) {
+        userRef.once('value', function(snapshot) {
           if (!snapshot.val()) {
             properties.votesLeft = 10;
+          } else {
+            properties.votesLeft = snapshot.val().votesLeft;
           }
-          var user = EmberFire.Object.create({ ref: userRef });
+          var user = App.User.create({ ref: userRef });
+          user.setProperties(properties);
           controller.set('currentUser', user);
         });
       } else {

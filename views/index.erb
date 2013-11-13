@@ -71,7 +71,9 @@
             </div>
             {{#if auth.authed }}
               <div class="span2">
-                <button class="btn btn-primary" {{action vote}}>Vote</button>
+                <button {{bind-attr class=":btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary"}}
+                        {{bind-attr disabled="auth.currentUser.noVotesLeft"}}
+                        {{action vote}}>Vote</button>
               </div>
             {{/if}}
           </div>
@@ -110,7 +112,7 @@
   <script src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
   <script src="http://builds.emberjs.com/ember-latest.js"></script>
-  <script src="http://firebase.github.io/emberFire/emberfire-latest.js"></script>
+  <script src="js/emberfire-latest.js"></script>
   <script src="js/app.js"></script>
 
 </body>
