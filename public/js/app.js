@@ -1,8 +1,13 @@
 // TODOS:
 // - Remove ideas/new route
-// - Inject auth to all routes and controllers to do away with all the needs calls
 // - Don't let user vote on the same idea multiple times
-App = Ember.Application.create();
+App = Ember.Application.create({
+  ready: function() {
+    this.register('main:auth', App.AuthController);
+    this.inject('route', 'auth', 'main:auth');
+    this.inject('controller', 'auth', 'main:auth');
+  }
+});
 
 var dbRoot = "https://emberfire-ideavote.firebaseio.com"
 var dbRef = new Firebase(dbRoot);
@@ -67,10 +72,6 @@ App.IdeasNewRoute = Ember.Route.extend({
 });
 
 App.ApplicationController = Ember.Controller.extend({
-  auth: null,
-  needs: ['auth'],
-  authBinding: 'controllers.auth',
-
   login: function() {
     this.get('auth').login();
   },
@@ -86,10 +87,6 @@ App.IdeasController = Ember.ArrayController.extend({
 });
 
 App.IdeaController = Ember.ObjectController.extend({
-  auth: null,
-  needs: 'auth',
-  authBinding: 'controllers.auth',
-
   displayable: function() {
     return !(Ember.isEmpty(this.get('title')) || this.get('isNew'));
   }.property('isNew', 'title'),
@@ -108,10 +105,7 @@ App.IdeaController = Ember.ObjectController.extend({
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
-  auth: null,
   title: '',
-  needs: 'auth',
-  authBinding: 'controllers.auth',
 
   isDisabled: function() {
     return Ember.isEmpty(this.get('title'));
