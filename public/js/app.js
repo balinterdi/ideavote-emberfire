@@ -72,12 +72,14 @@ App.IdeasNewRoute = Ember.Route.extend({
 });
 
 App.ApplicationController = Ember.Controller.extend({
-  login: function() {
-    this.get('auth').login();
-  },
+  actions: {
+    login: function() {
+      this.get('auth').login();
+    },
 
-  logout: function() {
-    this.get('auth').logout();
+    logout: function() {
+      this.get('auth').logout();
+    }
   }
 });
 
