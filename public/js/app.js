@@ -14,22 +14,6 @@ var dbRef = new Firebase(dbRoot);
 var ideasPath = dbRoot + "/ideas";
 var usersPath = dbRoot + "/users";
 
-// App.Idea = Ember.Object.extend({
-//   title: DS.attr('string'),
-//   timestamp: DS.attr('date'),
-//
-//   voteCount: Ember.computed.alias('votes.length'),
-//   voteOf: function(user) {
-//     return this.get('votes').find(function(vote) {
-//       return vote.get('voter') === user;
-//     });
-//   },
-//
-//   isVotedBy: function(user) {
-//     return this.get('votes').mapProperty('voter').contains(user);
-//   }
-// });
-//
 App.User = EmberFire.Object.extend({
   noVotesLeft: Ember.computed.lte('votesLeft', 0)
 });
