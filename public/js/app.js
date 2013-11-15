@@ -1,5 +1,4 @@
 // TODOS:
-// - Don't let user vote on the same idea multiple times
 App = Ember.Application.create({
   ready: function() {
     this.register('main:auth', App.AuthController);
@@ -15,7 +14,15 @@ var ideasPath = dbRoot + "/ideas";
 var usersPath = dbRoot + "/users";
 
 App.User = EmberFire.Object.extend({
-  noVotesLeft: Ember.computed.lte('votesLeft', 0)
+  noVotesLeft: Ember.computed.lte('votesLeft', 0),
+  hasVotedOn: function(ideaId) {
+    var votedOn = [];
+    this.ref.child('votedOn').on('value', function(snapshot) {
+      var votedIdeaIds = Object.keys(snapshot.val());
+      votedOn = votedOn.concat(votedIdeaIds);
+    });
+    return votedOn.indexOf(ideaId) !== -1;
+  }
 });
 
 App.Router.map(function() {
@@ -56,12 +63,17 @@ App.IdeasController = Ember.ArrayController.extend({
 App.IdeaController = Ember.ObjectController.extend({
   displayable: Ember.computed.not('isNew'),
   outOfVotes:  Ember.computed.alias('auth.currentUser.noVotesLeft'),
+  voteable: function() {
+    var user = this.get('auth.currentUser');
+    var ideaId = this.get('model.id');
+    return !(user && user.hasVotedOn(ideaId));
+  }.property('auth.currentUser', 'model'),
 
   actions: {
     vote: function() {
       var user = this.get('auth.currentUser');
       var votedOn = EmberFire.Object.create({
-        ref: new Firebase(usersPath + '/votedOn')
+        ref: new Firebase(usersPath + '/' + user.get('id') + '/votedOn')
       });
 
       votedOn.set(this.get('model.id'), true)
