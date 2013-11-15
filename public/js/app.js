@@ -18,8 +18,11 @@ App.User = EmberFire.Object.extend({
   hasVotedOn: function(ideaId) {
     var votedOn = [];
     this.ref.child('votedOn').on('value', function(snapshot) {
-      var votedIdeaIds = Object.keys(snapshot.val());
-      votedOn = votedOn.concat(votedIdeaIds);
+      var votedIdeas = snapshot.val();
+      if (votedIdeas) {
+        var votedIdeaIds = Object.keys(votedIdeas);
+        votedOn = votedOn.concat(votedIdeaIds);
+      }
     });
     return votedOn.indexOf(ideaId) !== -1;
   }
