@@ -1,5 +1,4 @@
 // TODOS:
-// - Remove ideas/new route
 // - Don't let user vote on the same idea multiple times
 App = Ember.Application.create({
   ready: function() {
@@ -36,9 +35,7 @@ App.User = EmberFire.Object.extend({
 });
 
 App.Router.map(function() {
-  this.resource('ideas', function() {
-    this.route('new');
-  });
+  this.resource('ideas');
 });
 
 App.IndexRoute = Ember.Route.extend({
@@ -48,22 +45,6 @@ App.IndexRoute = Ember.Route.extend({
 });
 
 App.IdeasRoute = Ember.Route.extend({
-  model: function() {
-    return EmberFire.Array.create({
-      ref: new Firebase(ideasPath)
-    });
-  }
-});
-
-App.IdeasIndexRoute = Ember.Route.extend({
-  //TODO: Retrieve /ideas here, see IdeasNewRoute
-  redirect: function() {
-    this.transitionTo('ideas.new');
-  }
-});
-
-App.IdeasNewRoute = Ember.Route.extend({
-  // No separate route needed for the new action, just {{ render }} it
   model: function() {
     return EmberFire.Array.create({
       ref: new Firebase(ideasPath)
@@ -125,10 +106,6 @@ App.IdeasNewController = Ember.ObjectController.extend({
       });
       this.set('title', '');
     }
-  },
-
-  login: function() {
-    this.get('auth').login();
   }
 
 });
