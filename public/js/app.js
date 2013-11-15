@@ -54,13 +54,7 @@ App.IdeasController = Ember.ArrayController.extend({
 });
 
 App.IdeaController = Ember.ObjectController.extend({
-  displayable: function() {
-    return !(Ember.isEmpty(this.get('title')) || this.get('isNew'));
-  }.property('isNew', 'title'),
-
-  isDisabled: function() {
-    return Ember.isEmpty(this.get('title'));
-  }.property('title'),
+  displayable: Ember.computed.not('isNew'),
 
   actions: {
     vote: function() {
@@ -73,10 +67,7 @@ App.IdeaController = Ember.ObjectController.extend({
 
 App.IdeasNewController = Ember.ObjectController.extend({
   title: '',
-
-  isDisabled: function() {
-    return Ember.isEmpty(this.get('title'));
-  }.property('title'),
+  isDisabled: Ember.computed.empty('title'),
 
   actions: {
     sendIdea: function() {
