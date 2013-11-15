@@ -55,6 +55,7 @@ App.IdeasController = Ember.ArrayController.extend({
 
 App.IdeaController = Ember.ObjectController.extend({
   displayable: Ember.computed.not('isNew'),
+  outOfVotes:  Ember.computed.alias('auth.currentUser.noVotesLeft'),
 
   actions: {
     vote: function() {
