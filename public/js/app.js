@@ -38,6 +38,18 @@ App.Router.map(function() {
   this.resource('ideas');
 });
 
+App.ApplicationRoute = Ember.Route.extend({
+  actions: {
+    login: function() {
+      this.get('auth').login();
+    },
+
+    logout: function() {
+      this.get('auth').logout();
+    }
+  }
+});
+
 App.IndexRoute = Ember.Route.extend({
   redirect: function() {
     this.transitionTo('ideas.index');
@@ -49,18 +61,6 @@ App.IdeasRoute = Ember.Route.extend({
     return EmberFire.Array.create({
       ref: new Firebase(ideasPath)
     });
-  }
-});
-
-App.ApplicationController = Ember.Controller.extend({
-  actions: {
-    login: function() {
-      this.get('auth').login();
-    },
-
-    logout: function() {
-      this.get('auth').logout();
-    }
   }
 });
 
