@@ -65,6 +65,15 @@ App.IdeaController = Ember.ObjectController.extend({
   outOfVotes:  Ember.computed.alias('auth.currentUser.noVotesLeft'),
   voteable: function() {
     var user = this.get('auth.currentUser');
+    if (!user) {
+      console.log("Current user not yet known");
+    }
+    //TODO: Sometimes this.get('model') is an Emberfire.Object and other timer it is just a POJO
+    if (this.get('model.id')) {
+      console.log("I'm an EmberFire.Object Idea");
+    } else {
+      console.log("I'm a POJO Idea");
+    }
     var ideaId = this.get('model.id');
     return !(user && user.hasVotedOn(ideaId));
   }.property('auth.currentUser', 'model'),
