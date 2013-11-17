@@ -16,15 +16,8 @@ var usersPath = dbRoot + "/users";
 App.User = EmberFire.Object.extend({
   noVotesLeft: Ember.computed.lte('votesLeft', 0),
   hasVotedOn: function(ideaId) {
-    var votedOn = [];
-    this.ref.child('votedOn').on('value', function(snapshot) {
-      var votedIdeas = snapshot.val();
-      if (votedIdeas) {
-        var votedIdeaIds = Object.keys(votedIdeas);
-        votedOn = votedOn.concat(votedIdeaIds);
-      }
-    });
-    return votedOn.indexOf(ideaId) !== -1;
+    var votedOn = this.get('votedOn');
+    return votedOn && votedOn.get(ideaId);
   }
 });
 
@@ -84,12 +77,11 @@ App.IdeaController = Ember.ObjectController.extend({
   actions: {
     vote: function() {
       var user = this.get('auth.currentUser'),
-          votedOn = EmberFire.Object.create({
-            ref: new Firebase(usersPath + '/' + user.get('id') + '/votedOn')
-          }),
-          voteCountRef = this.get('model').ref.child('voteCount');
+          votedOnRef = new Firebase(usersPath + '/' + user.get('id') + '/votedOn'),
+          voteCountRef = this.get('model').ref.child('voteCount'),
+          ideaId = this.get('model.id');
 
-      votedOn.set(this.get('model.id'), true);
+      votedOnRef.child(ideaId).set(true);
       voteCountRef.transaction(function(count) {
         return count + 1;
       });
