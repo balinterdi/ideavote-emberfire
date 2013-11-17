@@ -83,13 +83,16 @@ App.IdeaController = Ember.ObjectController.extend({
 
   actions: {
     vote: function() {
-      var user = this.get('auth.currentUser');
-      var votedOn = EmberFire.Object.create({
-        ref: new Firebase(usersPath + '/' + user.get('id') + '/votedOn')
-      });
+      var user = this.get('auth.currentUser'),
+          votedOn = EmberFire.Object.create({
+            ref: new Firebase(usersPath + '/' + user.get('id') + '/votedOn')
+          }),
+          voteCountRef = this.get('model').ref.child('voteCount');
 
-      votedOn.set(this.get('model.id'), true)
-      this.incrementProperty('voteCount');
+      votedOn.set(this.get('model.id'), true);
+      voteCountRef.transaction(function(count) {
+        return count + 1;
+      });
       user.decrementProperty('votesLeft');
     },
   }
