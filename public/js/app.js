@@ -121,7 +121,7 @@ App.AuthController = Ember.Controller.extend({
           avatarUrl: githubUser.avatar_url,
         };
         userRef.once('value', function(snapshot) {
-          if (!snapshot.val()) {
+          if (!snapshot.val().votesLeft) {
             properties.votesLeft = 10;
           } else {
             properties.votesLeft = snapshot.val().votesLeft;
