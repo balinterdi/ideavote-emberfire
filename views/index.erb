@@ -70,8 +70,8 @@
             {{#if auth.authed }}
               <div class="span2">
               {{#if voteable}}
-                <button {{bind-attr class=":btn outOfVotes:btn-disabled:btn-primary"}}
-                        {{bind-attr disabled="outOfVotes"}}
+                <button {{bind-attr class=":btn noVotesLeft:btn-disabled:btn-primary"}}
+                        {{bind-attr disabled="noVotesLeft"}}
                         {{action vote}}>Vote</button>
               {{else}}
                 <button class="btn disabled" disabled>
